@@ -9,4 +9,7 @@ export class UserDto {
     
     @ApiProperty()
     name: string;
+
+    @ApiProperty()
+    role: string
 }

@@ -6,4 +6,7 @@ export class CreatedUserDto {
     
     @ApiProperty()
     name: string;
+
+    @ApiProperty()
+    role: string;
 }

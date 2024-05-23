@@ -14,12 +14,6 @@ export const roundsOfHashing = 10;
 export class UserService {
   constructor(private prisma: PrismaService) { }
 
-  exclude<User, Key extends keyof User>(user: User, keys: Key[]): Omit<User, Key> {
-    return Object.fromEntries(
-      Object.entries(user).filter(([key]) => !keys.includes(key as Key))
-    ) as Omit<User, Key>;
-  }
-
   async create(createUserDto: CreateUserDto): Promise<CreatedUserDto> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, roundsOfHashing);
     createUserDto.password = hashedPassword;
@@ -28,8 +22,11 @@ export class UserService {
       data: createUserDto,
     });
 
-    const filteredUser = this.exclude(user, ['password', 'id']);
-    return filteredUser;
+    return {
+      name: user.name,
+      email: user.email,
+      role: user.role
+    }
   }
 
   async findAll(): Promise<UserDto[]> {
@@ -38,6 +35,7 @@ export class UserService {
         id: true,
         email: true,
         name: true,
+        role: true
       },
     });
 
@@ -59,8 +57,12 @@ export class UserService {
       throw new NotFoundException(`No user found for id: ${userId}`);
     }
 
-    const filteredUser = this.exclude(user, ['password']);
-    return filteredUser;
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role
+    }
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<UpdatedUserDto> {
@@ -81,8 +83,10 @@ export class UserService {
       data: updateUserDto,
     });
 
-    const filteredUser = this.exclude(user, ['email', 'password']);
-    return filteredUser;
+    return {
+      id: user.id,
+      name: user.name
+    }
   }
 
   async delete(id: number): Promise<DeletedUserDto> {
@@ -93,11 +97,15 @@ export class UserService {
     if (!existingUser) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
-    
+
     return this.prisma.user.delete({
       where: {
         id,
       },
     });
   }
+
+  // async resetUserIdSequence(): Promise<void> {
+  //   await this.prisma.$executeRaw`DELETE FROM sqlite_sequence WHERE name = 'User';`;
+  // }
 }

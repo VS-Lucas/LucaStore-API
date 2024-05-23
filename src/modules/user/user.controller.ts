@@ -17,8 +17,11 @@ import { DeletedUserDto } from './dtos/deletedUserDto';
 import { CreatedUserDto } from './dtos/createdUserDto';
 import { UpdatedUserDto } from './dtos/updatedUserDto';
 import { AuthenticationGuard } from 'src/guards/authentication.guard';
+import { AuthorizationGuard } from 'src/guards/authorization.guard';
+import { Role } from 'src/decorators/role.decorator';
 
-@UseGuards(AuthenticationGuard)
+@Role('ADMIN')
+@UseGuards(AuthenticationGuard, AuthorizationGuard)
 @Controller('user')
 @ApiTags('Users')
 export class UserController {

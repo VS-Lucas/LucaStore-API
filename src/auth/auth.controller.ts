@@ -1,7 +1,8 @@
 import { Body, Controller, HttpException, HttpStatus, NotFoundException, Post, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthPayloadDto } from './dtos/auth.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { AuthPayloadDto } from './dtos/auth-payload.dto';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { AuthDto } from './dtos/auth.dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -9,7 +10,8 @@ export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
     @Post('login')
-    login(@Body() authPayloadDto: AuthPayloadDto) {
+    @ApiOkResponse({ type: AuthDto })
+    login(@Body() authPayloadDto: AuthPayloadDto): Promise<AuthDto> {
         return this.authService.login(authPayloadDto);
     }
 }
