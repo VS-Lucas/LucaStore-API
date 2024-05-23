@@ -6,6 +6,9 @@ import { CreatedUserDto } from './dtos/createdUserDto';
 import { UserDto } from './dtos/userDto';
 import { DeletedUserDto } from './dtos/deletedUserDto';
 import { UpdatedUserDto } from './dtos/updatedUserDto';
+import * as bcrypt from 'bcrypt';
+
+export const roundsOfHashing = 10;
 
 @Injectable()
 export class UserService {
@@ -21,12 +24,15 @@ export class UserService {
     }
 
     async create(createUserDto: CreateUserDto): Promise<CreatedUserDto> {
+        const hashedPassword = await bcrypt.hash(
+            createUserDto.password,
+            roundsOfHashing,
+        );
+
+        createUserDto.password = hashedPassword;
+
         const user = await this.prisma.user.create({
-            data: {
-                email: createUserDto.email,
-                name: createUserDto.name,
-                password: createUserDto.password
-            }
+            data: createUserDto,
         });
 
         const filteredUser = this.exclude(user, ['password', 'id']);
@@ -59,6 +65,13 @@ export class UserService {
     }
 
     async update(id: number, updateUserDto: UpdateUserDto): Promise<UpdatedUserDto> {
+        if (updateUserDto.password) {
+            updateUserDto.password = await bcrypt.hash(
+                updateUserDto.password,
+                roundsOfHashing,
+            );
+        }
+
         const user = await this.prisma.user.update({
             where: { id },
             data: updateUserDto
