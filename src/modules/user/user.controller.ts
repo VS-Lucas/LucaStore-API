@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -17,11 +16,12 @@ import { UserDto } from './dtos/userDto';
 import { DeletedUserDto } from './dtos/deletedUserDto';
 import { CreatedUserDto } from './dtos/createdUserDto';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { UpdatedUserDto } from './dtos/updatedUserDto';
 
 @Controller('user')
 @ApiTags('Users')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
   @Post()
   @ApiCreatedResponse({ type: CreatedUserDto })
@@ -48,8 +48,8 @@ export class UserController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOkResponse({ type: UpdateUserDto })
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<UpdateUserDto> {
+  @ApiOkResponse({ type: UpdatedUserDto })
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<UpdatedUserDto> {
     return this.userService.update(+id, updateUserDto);
   }
 
