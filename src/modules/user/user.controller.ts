@@ -15,9 +15,10 @@ import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nest
 import { UserDto } from './dtos/userDto';
 import { DeletedUserDto } from './dtos/deletedUserDto';
 import { CreatedUserDto } from './dtos/createdUserDto';
-import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { UpdatedUserDto } from './dtos/updatedUserDto';
+import { AuthenticationGuard } from 'src/guards/authentication.guard';
 
+@UseGuards(AuthenticationGuard)
 @Controller('user')
 @ApiTags('Users')
 export class UserController {
@@ -30,7 +31,6 @@ export class UserController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOkResponse({ type: UserDto, isArray: true })
   async findAll(): Promise<UserDto[]> {
@@ -38,7 +38,6 @@ export class UserController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOkResponse({ type: UserDto })
   async getById(@Param('id') id: string): Promise<UserDto> {
@@ -46,7 +45,6 @@ export class UserController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOkResponse({ type: UpdatedUserDto })
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<UpdatedUserDto> {
@@ -54,7 +52,6 @@ export class UserController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOkResponse({ type: DeletedUserDto })
   async delete(@Param('id') id: string): Promise<DeletedUserDto> {
