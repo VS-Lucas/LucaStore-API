@@ -5,5 +5,11 @@ export class CreateProductDto {
   name: string;
   
   @ApiProperty()
-  category: string;
+  description: string;
+
+  @ApiProperty()
+  price: number;
+
+  @ApiProperty()
+  catalogId: number;
 }

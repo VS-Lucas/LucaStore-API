@@ -11,7 +11,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dtos/createUserDto';
 import { UpdateUserDto } from './dtos/updateUserDto';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiAcceptedResponse, ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UserDto } from './dtos/userDto';
 import { DeletedUserDto } from './dtos/deletedUserDto';
 import { CreatedUserDto } from './dtos/createdUserDto';
@@ -56,7 +56,7 @@ export class UserController {
 
   @Delete(':id')
   @ApiBearerAuth()
-  @ApiOkResponse({ type: DeletedUserDto })
+  @ApiAcceptedResponse({ type: DeletedUserDto })
   async delete(@Param('id') id: string): Promise<DeletedUserDto> {
     return this.userService.delete(+id);
   }

@@ -26,7 +26,7 @@ export class UserService {
       name: user.name,
       email: user.email,
       role: user.role
-    }
+    };
   }
 
   async findAll(): Promise<UserDto[]> {
@@ -62,7 +62,7 @@ export class UserService {
       email: user.email,
       name: user.name,
       role: user.role
-    }
+    };
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<UpdatedUserDto> {
@@ -86,7 +86,7 @@ export class UserService {
     return {
       id: user.id,
       name: user.name
-    }
+    };
   }
 
   async delete(id: number): Promise<DeletedUserDto> {
