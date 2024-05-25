@@ -42,7 +42,7 @@ export class UserController {
 
   @Get(':id')
   @ApiBearerAuth()
-  @ApiOkResponse({ type: UserDto })
+  @ApiAcceptedResponse({ type: UserDto })
   async getById(@Param('id') id: string): Promise<UserDto> {
     return this.userService.getById(+id);
   }
@@ -50,8 +50,8 @@ export class UserController {
   @Patch(':id')
   @ApiBearerAuth()
   @ApiOkResponse({ type: UpdatedUserDto })
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<UpdatedUserDto> {
-    return this.userService.update(+id, updateUserDto);
+  async update(@Param('id') id: string, @Body() body: UpdateUserDto): Promise<UpdatedUserDto> {
+    return this.userService.update(+id, body);
   }
 
   @Delete(':id')

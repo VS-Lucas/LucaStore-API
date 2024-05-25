@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dtos/createProductDto';
 import { ApiAcceptedResponse, ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
@@ -7,6 +7,7 @@ import { Role } from 'src/decorators/role.decorator';
 import { AuthenticationGuard } from 'src/guards/authentication.guard';
 import { AuthorizationGuard } from 'src/guards/authorization.guard';
 import { ProductDto } from './dtos/productDto';
+import { UpdateProductDto } from './dtos/updateProductDto';
 
 @Role('ADMIN')
 @ApiBearerAuth()
@@ -38,6 +39,12 @@ export class ProductController {
   @ApiOkResponse({ type: ProductDto, isArray: true })
   async findAllByCatalogId(@Param('id') id: string): Promise<ProductDto[]> {
     return this.productService.findAllByCatalogId(+id)
+  }
+
+  @Patch(':id')
+  @ApiAcceptedResponse({ type: UpdateProductDto })
+  async update(@Param('id') id: string, @Body() body: UpdateProductDto): Promise<UpdateProductDto> {
+    return this.productService.updateProduct(+id, body)
   }
 
   @Delete(':id')

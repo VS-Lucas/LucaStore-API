@@ -9,11 +9,11 @@ datasource db {
 
 model Product {
   id          Int       @id @default(autoincrement())
-  name        String
-  description String
-  price       Float
-  catalogId   Int
-  catalog     Catalog   @relation(fields: [catalogId], references: [id])
+  name        String?
+  description String?
+  price       Float?
+  catalogId   Int?
+  catalog     Catalog?   @relation(fields: [catalogId], references: [id])
   stock       Stock?
   cartItems   CartItem[]
   orderItems  OrderItem[]
