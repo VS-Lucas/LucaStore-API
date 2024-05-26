@@ -1,11 +1,13 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { CatalogService } from './catalog.service';
-import { CreateCatalogDto } from './dto/create-catalog.dto';
-import { ApiTags, ApiCreatedResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { CreateCatalogDto } from './dtos/CreateCatalogDto';
+import { ApiTags, ApiCreatedResponse, ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
 import { Role } from 'src/decorators/role.decorator';
 import { AuthenticationGuard } from 'src/guards/authentication.guard';
 import { AuthorizationGuard } from 'src/guards/authorization.guard';
-import { CreatedCatalogDto } from './dto/created-catalog.dto';
+import { CreatedCatalogDto } from './dtos/CreatedCatalogDto';
+import { CatalogDto } from './dtos/CatalogDto';
+import { UpdateCatalogDto } from './dtos/UpdateCatalogDto';
 // import { UpdateCatalogDto } from './dto/update-catalog.dto';
 
 @Role('ADMIN')
@@ -22,23 +24,25 @@ export class CatalogController {
     return this.catalogService.create(createCatalogDto);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.catalogService.findAll();
-  // }
+  @Get('all')
+  @ApiOkResponse({ type: CatalogDto, isArray: true })
+  findAll(): Promise<CatalogDto[]> {
+    return this.catalogService.findAll();
+  }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.catalogService.findOne(+id);
-  // }
+  @Get(':id')
+  @ApiOkResponse({ type: CatalogDto })
+  findById(@Param('id') id: string): Promise<UpdateCatalogDto> {
+    return this.catalogService.findById(+id);
+  }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateCatalogDto: UpdateCatalogDto) {
-  //   return this.catalogService.update(+id, updateCatalogDto);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateCatalogDto: UpdateCatalogDto) {
+    return this.catalogService.update(+id, updateCatalogDto);
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.catalogService.remove(+id);
-  // }
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.catalogService.delete(+id);
+  }
 }

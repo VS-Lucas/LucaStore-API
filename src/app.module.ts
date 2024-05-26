@@ -5,8 +5,9 @@ import { ProductModule } from './modules/product/product.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
+import { StockModule } from './modules/stock/stock.module';
 @Module({
-  imports: [ProductModule, UserModule, AuthModule, CatalogModule],
+  imports: [ProductModule, UserModule, AuthModule, CatalogModule, StockModule],
   controllers: [AppController],
   providers: [AppService, Logger],
 })

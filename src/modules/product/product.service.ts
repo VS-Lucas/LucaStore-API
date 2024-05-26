@@ -10,16 +10,37 @@ export class ProductService {
   constructor(private prisma: PrismaService) { }
 
   async createProduct(createProductDto: CreateProductDto): Promise<CreatedProductDto> {
+    const existingCatalog = await this.prisma.catalog.findUnique({
+      where: { id: createProductDto.catalogId },
+    });
+  
+    if (!existingCatalog) {
+      throw new NotFoundException('Catalog not found');
+    }
+  
+    const data: any = {
+      name: createProductDto.name,
+      description: createProductDto.description,
+      price: createProductDto.price,
+      catalog: {
+        connect: {
+          id: createProductDto.catalogId,
+        },
+      },
+    };
+  
+    if (createProductDto.amountInStock !== undefined && createProductDto.amountInStock !== null) {
+      data.stock = {
+        create: {
+          quantity: createProductDto.amountInStock,
+        },
+      };
+    }
+  
     const product = await this.prisma.product.create({
-      data: {
-        name: createProductDto.name,
-        description: createProductDto.description,
-        price: createProductDto.price,
-        catalog: {
-          connect: {
-            id: createProductDto.catalogId
-          }
-        }
+      data: data,
+      include: {
+        stock: true,
       },
     });
 
@@ -30,7 +51,8 @@ export class ProductService {
       price: product.price,
       catalog: {
         id: product.catalogId
-      }
+      },
+      amountInStock: product.stock?.quantity ?? 0
     };
   }
 
@@ -60,7 +82,7 @@ export class ProductService {
     })
 
     if (!product) {
-      throw new NotFoundException();
+      throw new NotFoundException(`No product found for id ${productId}`);
     }
 
     return {
@@ -90,25 +112,25 @@ export class ProductService {
     const existingProduct = await this.prisma.product.findUnique({
       where: { id: productId },
     });
-  
+
     if (!existingProduct) {
       throw new NotFoundException(`Product with ID ${productId} not found`);
     }
-  
+
     const product = await this.prisma.product.update({
       where: { id: productId },
       data: {
         ...(updateProductDto.name && { name: updateProductDto.name }),
         ...(updateProductDto.description && { description: updateProductDto.description }),
         ...(updateProductDto.price && { price: updateProductDto.price }),
-        ...(updateProductDto.catalogId && { 
+        ...(updateProductDto.catalogId && {
           catalog: {
             connect: { id: updateProductDto.catalogId },
           }
         }),
       },
     });
-  
+
     return product;
   }
 

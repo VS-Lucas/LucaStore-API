@@ -1,13 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { CreateCatalogDto } from './dto/create-catalog.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateCatalogDto } from './dtos/CreateCatalogDto';
 import { PrismaService } from 'src/database/prisma.service';
-import { CreatedCatalogDto } from './dto/created-catalog.dto';
-// import { UpdateCatalogDto } from './dto/update-catalog.dto';
+import { CreatedCatalogDto } from './dtos/CreatedCatalogDto';
+import { CatalogDto } from './dtos/CatalogDto';
+import { UpdateCatalogDto } from './dtos/UpdateCatalogDto';
+import { truncate } from 'fs';
 
 @Injectable()
 export class CatalogService {
   constructor(private prisma: PrismaService) { }
-  
+
   async create(createCatalogDto: CreateCatalogDto): Promise<CreatedCatalogDto> {
     const catalog = await this.prisma.catalog.create({
       data: createCatalogDto
@@ -20,19 +22,89 @@ export class CatalogService {
     };
   }
 
-  // findAll() {
-  //   return `This action returns all catalog`;
-  // }
+  async findAll(): Promise<CatalogDto[]> {
+    const catalogs = await this.prisma.catalog.findMany({
+      select: {
+        id: true,
+        name: true,
+        category: true,
+        products: true
+      }
+    });
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} catalog`;
-  // }
+    if (catalogs.length === 0) {
+      throw new NotFoundException('No catalog found');
+    }
 
-  // update(id: number, updateCatalogDto: UpdateCatalogDto) {
-  //   return `This action updates a #${id} catalog`;
-  // }
+    return catalogs
+  }
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} catalog`;
-  // }
+  async findById(catalogId: number): Promise<CatalogDto> {
+    const existingCatalog = await this.prisma.catalog.findUnique({
+      where: {
+        id: catalogId,
+      },
+      include: {
+        products: true
+      },
+    });
+
+    if (!existingCatalog) {
+      throw new NotFoundException(`No catalog found for id ${catalogId}`);
+    }
+
+    return existingCatalog;
+  }
+
+
+  async update(catalogId: number, updateCatalogDto: UpdateCatalogDto): Promise<UpdateCatalogDto> {
+    const existingCatalog = await this.prisma.catalog.findUnique({
+      where: {
+        id: catalogId
+      }
+    });
+
+    if (!existingCatalog) {
+      throw new NotFoundException(`No catalog found for id ${catalogId}`)
+    }
+
+    const catalog = await this.prisma.catalog.update({
+      where: {
+        id: catalogId,
+      },
+      data: {
+        name: updateCatalogDto.name,
+        category: updateCatalogDto.category
+      },
+    });
+
+    return {
+      name: catalog.name,
+      category: catalog.category
+    };
+  }
+
+  async delete(catalogId: number): Promise<CatalogDto> {
+    const existingCatalog = await this.prisma.catalog.findUnique({
+      where: {
+        id: catalogId,
+      },
+      include: {
+        products: true,
+      },
+    });
+  
+    if (!existingCatalog) {
+      throw new NotFoundException('No catalog found');
+    }
+  
+    await this.prisma.catalog.delete({
+      where: {
+        id: catalogId,
+      },
+    });
+  
+    return existingCatalog;
+  }
+  
 }

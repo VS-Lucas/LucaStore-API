@@ -17,4 +17,7 @@ export class CreatedProductDto {
     catalog: {
         id: number;
     };
+
+    @ApiProperty()
+    amountInStock: number;
 }
