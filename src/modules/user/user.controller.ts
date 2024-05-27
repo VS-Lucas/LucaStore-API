@@ -21,7 +21,6 @@ import { AuthorizationGuard } from 'src/guards/authorization.guard';
 import { Role } from 'src/decorators/role.decorator';
 
 @Role('ADMIN')
-@UseGuards(AuthenticationGuard, AuthorizationGuard)
 @Controller('user')
 @ApiTags('Users')
 export class UserController {
@@ -34,6 +33,8 @@ export class UserController {
   }
 
   @Get()
+  @Role('ADMIN')
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @ApiBearerAuth()
   @ApiOkResponse({ type: UserDto, isArray: true })
   async findAll(): Promise<UserDto[]> {
@@ -41,6 +42,8 @@ export class UserController {
   }
 
   @Get(':id')
+  @Role('ADMIN')
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @ApiBearerAuth()
   @ApiAcceptedResponse({ type: UserDto })
   async getById(@Param('id') id: string): Promise<UserDto> {
@@ -48,6 +51,8 @@ export class UserController {
   }
 
   @Patch(':id')
+  @Role('ADMIN')
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @ApiBearerAuth()
   @ApiOkResponse({ type: UpdatedUserDto })
   async update(@Param('id') id: string, @Body() body: UpdateUserDto): Promise<UpdatedUserDto> {
@@ -55,6 +60,8 @@ export class UserController {
   }
 
   @Delete(':id')
+  @Role('ADMIN')
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @ApiBearerAuth()
   @ApiAcceptedResponse({ type: DeletedUserDto })
   async delete(@Param('id') id: string): Promise<DeletedUserDto> {

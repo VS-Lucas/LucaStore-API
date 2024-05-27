@@ -4,7 +4,6 @@ import { PrismaService } from 'src/database/prisma.service';
 import { CreatedCatalogDto } from './dtos/CreatedCatalogDto';
 import { CatalogDto } from './dtos/CatalogDto';
 import { UpdateCatalogDto } from './dtos/UpdateCatalogDto';
-import { truncate } from 'fs';
 
 @Injectable()
 export class CatalogService {
