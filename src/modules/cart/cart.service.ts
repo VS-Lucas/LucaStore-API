@@ -4,6 +4,7 @@ import { PrismaService } from 'src/database/prisma.service';
 import { CreatedCartDto } from './dtos/CreatedCartDto';
 import { CartDto } from './dtos/CartDto';
 import { UpdateCartDto } from './dtos/UpdateCartDto';
+import { OrderDto } from './dtos/OrderDto';
 
 @Injectable()
 export class CartService {
@@ -194,4 +195,58 @@ export class CartService {
 
     return cart;
   }
+
+  async finishOrder(cartId: number): Promise<OrderDto> {
+    const existingCart = await this.prisma.cart.findFirst({
+      where: {
+        id: cartId
+      },
+      include: {
+        items: {
+          include: {
+            product: true
+          }
+        }
+      }
+    });
+
+    if (!existingCart) {
+      throw new ConflictException(`No cart found for id ${cartId}`);
+    }
+
+    const total = existingCart.items.reduce((acc, item) => {
+      return acc + (item.quantity * item.product.price);
+    }, 0);
+
+
+    const order = await this.prisma.order.create({
+      data: {
+        user: {
+          connect: {
+            id: existingCart.userId,
+          },
+        },
+        items: {
+          create: existingCart.items.map(item => ({
+            quantity: item.quantity,
+            product: {
+              connect: {
+                id: item.productId,
+              },
+            },
+          })),
+        },
+        total: total
+      },
+      include: {
+        items: true,
+      },
+    });
+
+    this.deleteByUserId(existingCart.userId);
+
+    return order;
+
+  }
+
 }

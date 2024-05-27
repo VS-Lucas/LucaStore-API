@@ -8,6 +8,7 @@ import { Role } from 'src/decorators/role.decorator';
 import { AuthorizationGuard } from 'src/guards/authorization.guard';
 import { CartDto } from './dtos/CartDto';
 import { UpdateCartDto } from './dtos/UpdateCartDto';
+import { OrderDto } from './dtos/OrderDto';
 
 @UseGuards(AuthenticationGuard)
 @Controller('cart')
@@ -42,6 +43,18 @@ export class CartController {
   @ApiBearerAuth()
   create(@Body() createCartDto: CreateCartDto, @Param('id') id: string): Promise<CreatedCartDto> {
     return this.cartService.create(createCartDto, +id);
+  }
+
+  @Post('order/:id')
+  @ApiCreatedResponse({ type: OrderDto })
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the cart',
+    example: '1',
+  })
+  @ApiBearerAuth()
+  finishOrder(@Param('id') id: string): Promise<OrderDto> {
+    return this.cartService.finishOrder(+id);
   }
 
   @Patch('user/:id')
