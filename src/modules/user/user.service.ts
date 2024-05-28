@@ -104,8 +104,4 @@ export class UserService {
       },
     });
   }
-
-  // async resetUserIdSequence(): Promise<void> {
-  //   await this.prisma.$executeRaw`DELETE FROM sqlite_sequence WHERE name = 'User';`;
-  // }
 }
