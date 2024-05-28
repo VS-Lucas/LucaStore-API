@@ -23,7 +23,7 @@ Before you begin, you need to have [Node.js](https://nodejs.org/) and [pnpm](htt
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/VS-Lucas/lucastore-api.git
+    git clone https://github.com/VS-Lucas/LucaStore-API.git
     cd lucastore-api
     ```
 
@@ -61,6 +61,12 @@ To watch for changes in your files, you can run the following command to start t
 ```bash
 pnpm run start:dev
 ```
+
+## Documentation
+
+To access the project documentation, visit:
+
+[http://localhost:3000/api](http://localhost:3000/api)
 
 ## Contribution
 
