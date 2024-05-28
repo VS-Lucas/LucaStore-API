@@ -4,7 +4,7 @@ import { PrismaService } from 'src/database/prisma.service';
 import { CreatedCartDto } from './dtos/CreatedCartDto';
 import { CartDto } from './dtos/CartDto';
 import { UpdateCartDto } from './dtos/UpdateCartDto';
-import { OrderDto } from './dtos/OrderDto';
+import { OrderDto } from '../order/dtos/OrderDto';
 
 @Injectable()
 export class CartService {

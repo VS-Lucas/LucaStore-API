@@ -11,7 +11,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dtos/createUserDto';
 import { UpdateUserDto } from './dtos/updateUserDto';
-import { ApiAcceptedResponse, ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiAcceptedResponse, ApiBearerAuth, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UserDto } from './dtos/userDto';
 import { DeletedUserDto } from './dtos/deletedUserDto';
 import { CreatedUserDto } from './dtos/createdUserDto';
@@ -21,10 +21,10 @@ import { AuthorizationGuard } from 'src/guards/authorization.guard';
 import { Role } from 'src/decorators/role.decorator';
 
 @Role('ADMIN')
-@Controller('user')
-@ApiTags('Users')
+@Controller('api/user')
+@ApiTags('User')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post()
   @ApiCreatedResponse({ type: CreatedUserDto })
@@ -37,6 +37,7 @@ export class UserController {
   @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @ApiBearerAuth()
   @ApiOkResponse({ type: UserDto, isArray: true })
+  @ApiNotFoundResponse({ description: 'Not Found' })
   async findAll(): Promise<UserDto[]> {
     return this.userService.findAll();
   }
@@ -46,6 +47,7 @@ export class UserController {
   @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @ApiBearerAuth()
   @ApiAcceptedResponse({ type: UserDto })
+  @ApiNotFoundResponse({ description: 'Not Found' })
   async getById(@Param('id') id: string): Promise<UserDto> {
     return this.userService.getById(+id);
   }
@@ -63,7 +65,8 @@ export class UserController {
   @Role('ADMIN')
   @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @ApiBearerAuth()
-  @ApiAcceptedResponse({ type: DeletedUserDto })
+  @ApiOkResponse({ type: DeletedUserDto })
+  @ApiNotFoundResponse({ description: 'Not Found' })
   async delete(@Param('id') id: string): Promise<DeletedUserDto> {
     return this.userService.delete(+id);
   }

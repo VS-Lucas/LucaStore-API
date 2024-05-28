@@ -1,34 +1,37 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
+import { ApiBearerAuth, ApiNotFoundResponse, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import { AuthenticationGuard } from 'src/guards/authentication.guard';
+import { OrderDto } from './dtos/OrderDto';
+import { AuthorizationGuard } from 'src/guards/authorization.guard';
+import { Role } from 'src/decorators/role.decorator';
 
-@Controller('order')
+@UseGuards(AuthenticationGuard)
+@Controller('api/order')
+@ApiTags('Order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(private readonly orderService: OrderService) { }
 
-  @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.create(createOrderDto);
+  @Get('all/:id')
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the user',
+    example: '1',
+  })
+  @ApiOkResponse({ type: OrderDto, isArray: true })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiBearerAuth()
+  findAllByUserId(@Param('id') id: string): Promise<OrderDto[]> {
+    return this.orderService.findAllByUserId(+id);
   }
 
-  @Get()
-  findAll() {
+  @Get('all')
+  @Role('ADMIN')
+  @UseGuards(AuthorizationGuard)
+  @ApiOkResponse({ type: OrderDto, isArray: true })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiBearerAuth()
+  findAll(): Promise<OrderDto[]> {
     return this.orderService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.orderService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.orderService.update(+id, updateOrderDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.orderService.remove(+id);
   }
 }

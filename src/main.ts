@@ -10,8 +10,8 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter(loggerInstance));
 
   const config = new DocumentBuilder()
-    .setTitle('API')
-    .setDescription('The API description')
+    .setTitle('LucaStore')
+    .setDescription(' LucaStore API Documentation')
     .setVersion('0.1')
     .addBearerAuth()
     .build();

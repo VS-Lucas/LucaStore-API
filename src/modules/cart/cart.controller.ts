@@ -1,23 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { CreateCartDto } from './dtos/CreateCartDto';
 import { CreatedCartDto } from './dtos/CreatedCartDto';
-import { ApiAcceptedResponse, ApiBearerAuth, ApiCreatedResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiAcceptedResponse, ApiBearerAuth, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from 'src/guards/authentication.guard';
 import { Role } from 'src/decorators/role.decorator';
 import { AuthorizationGuard } from 'src/guards/authorization.guard';
 import { CartDto } from './dtos/CartDto';
 import { UpdateCartDto } from './dtos/UpdateCartDto';
-import { OrderDto } from './dtos/OrderDto';
+import { OrderDto } from '../order/dtos/OrderDto';
 
 @UseGuards(AuthenticationGuard)
-@Controller('cart')
-@ApiTags('Carts')
+@Controller('api/cart')
+@ApiTags('Cart')
 export class CartController {
   constructor(private readonly cartService: CartService) { }
 
   @Get('all')
-  @ApiCreatedResponse({ type: CartDto, isArray: true })
+  @ApiOkResponse({ type: CartDto, isArray: true })
+  @ApiNotFoundResponse({ description: 'Not Found' })
   @Role('ADMIN')
   @UseGuards(AuthorizationGuard)
   @ApiBearerAuth()
@@ -26,6 +27,8 @@ export class CartController {
   }
 
   @Get(':id')
+  @ApiOkResponse({ type: CartDto })
+  @ApiNotFoundResponse({ description: 'Not Found' })
   @Role('ADMIN')
   @UseGuards(AuthorizationGuard)
   @ApiBearerAuth()
@@ -46,7 +49,7 @@ export class CartController {
   }
 
   @Post('order/:id')
-  @ApiCreatedResponse({ type: OrderDto })
+  @ApiAcceptedResponse({ type: OrderDto })
   @ApiParam({
     name: 'id',
     description: 'The ID of the cart',
@@ -78,7 +81,8 @@ export class CartController {
   @Role('ADMIN')
   @UseGuards(AuthorizationGuard)
   @ApiBearerAuth()
-  @ApiAcceptedResponse({ type: CartDto })
+  @ApiOkResponse({ type: CartDto })
+  @ApiNotFoundResponse({ description: 'Not Found' })
   async deleteByUserId(@Param('id') userId: string): Promise<CartDto> {
     return this.cartService.deleteByUserId(+userId);
   }
