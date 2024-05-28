@@ -62,6 +62,12 @@ To watch for changes in your files, you can run the following command to start t
 pnpm run start:dev
 ```
 
+## Documentation
+
+To access the project documentation, visit:
+
+[http://localhost:3000/api](http://localhost:3000/api)
+
 ## Contribution
 
 If you wish to contribute to this project, please open a Pull Request or an Issue.
