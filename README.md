@@ -33,6 +33,15 @@ Before you begin, you need to have [Node.js](https://nodejs.org/) and [pnpm](htt
     pnpm install
     ```
 
+### Environment Variables
+
+Before running the project, you need to set up the environment variables. Create a `.env` file in the root of the project and add the following:
+
+```env
+DATABASE_URL="file:./dev.db"
+JWT_SECRET="<your_jwt_secret>"
+```
+
 ## Populating the Database
 
 1. To reset the database and populate it with seed data, run:
