@@ -62,7 +62,7 @@ pnpm run start
 To speed up the development process (20 times faster), you can use the SWC builder by passing the `-b swc` flag to the start script, as follows:
 
 ```bash
-npm run start -- -b swc
+pnpm run start -- -b swc
 ```
 
 To watch for changes in your files, you can run the following command to start the application:
